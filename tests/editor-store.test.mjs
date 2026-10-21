@@ -88,9 +88,9 @@ test('legacy drafts migrate content, section order, spacing, assets, and pages',
     assetUrl: 'data:image/png;base64,AA==',
     sitePages: [{ id: 'home', title: 'Home', description: 'Welcome' }, { id: 'about', title: 'About', description: 'Our story' }],
   }, fixture());
-  assert.equal(migrated.version, 3);
+  assert.equal(migrated.version, 4);
   assert.equal(migrated.name, 'Old Store');
-  assert.equal(migrated.content.hero.title, 'Old headline');
+  assert.equal(migrated.pages[0].sections[0].content.title, 'Old headline');
   assert.equal(migrated.pages[0].sections[0].style.padding?.top, 24);
   assert.equal(migrated.pages[1].slug, '/about');
   assert.equal(migrated.assets[0].src, 'data:image/png;base64,AA==');
@@ -170,10 +170,11 @@ test('renamed slugs survive editor projections for redirect handling', () => {
   const pageId = store.getState().addPage('About', [makeSection('hero', 'about-hero')]);
   store.getState().setPageSlug(pageId, 'our-story');
   const current = store.getState().document;
+  const heroSection = current.pages[0].sections.find((s) => s.type === 'hero');
   const projection = createSiteDocument({
     id: current.id, name: current.name, templateId: current.templateId, theme: current.theme,
     sections: current.pages[0].sections, pages: current.pages.map((page) => ({ id: page.id, title: page.title, description: page.seo.description, slug: page.slug, isHome: page.isHome, showInMenu: page.showInMenu, noindex: page.seo.noindex, oldSlugs: page.oldSlugs })),
-    hero: current.content.hero, features: current.content.features, testimonials: current.content.testimonials, cta: current.content.cta,
+    hero: heroSection?.content || { title: 'Hello', description: 'Intro' }, features: [], testimonials: [], cta: { title: 'Next', desc: 'Start', buttonText: 'Go' },
   });
   const merged = mergeEditorProjection(current, projection, 'home');
   assert.deepEqual(merged.pages.find((page) => page.id === pageId)?.oldSlugs, ['/about']);

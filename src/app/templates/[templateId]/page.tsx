@@ -31,7 +31,36 @@ const COLOR_PALETTES = [
   { name: 'Emerald', color: '#10B981' },
 ];
 
-function PreviewProductArt({ fresh, index }: { fresh: boolean; index: number }) {
+function PreviewProductArt({ templateId, fresh, index }: { templateId?: string; fresh: boolean; index: number }) {
+  if (templateId === 'kuro-craft') {
+    const accents = ['#00F0FF', '#7000FF', '#00FF66', '#FF0055', '#F59E0B', '#3B82F6'];
+    const accent = accents[index % accents.length];
+    return (
+      <svg viewBox="0 0 480 320" aria-hidden="true" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id={`preview-art-kuro-${index}`} x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#0B0E14" />
+            <stop offset="1" stopColor="#151D2C" />
+          </linearGradient>
+        </defs>
+        <rect width="480" height="320" fill={`url(#preview-art-kuro-${index})`} />
+        <circle cx="390" cy="55" r="90" fill={accent} opacity="0.16" />
+        <path d="M 0 80 L 480 80 M 0 160 L 480 160 M 0 240 L 480 240 M 120 0 L 120 320 M 240 0 L 240 320 M 360 0 L 360 320" stroke="#FFFFFF" strokeOpacity="0.04" strokeWidth="1" />
+        <g transform="translate(60, 45)">
+          <rect width="360" height="230" rx="16" fill="#0C111C" stroke={accent} strokeWidth="2" strokeOpacity="0.6" />
+          <rect x="24" y="24" width="130" height="18" rx="6" fill={accent} opacity="0.25" />
+          <rect x="24" y="52" width="220" height="10" rx="4" fill="#FFFFFF" opacity="0.1" />
+          <rect x="24" y="68" width="160" height="10" rx="4" fill="#FFFFFF" opacity="0.07" />
+          <path d="M 24 130 Q 110 80, 190 140 T 330 110" fill="none" stroke={accent} strokeWidth="4" strokeLinecap="round" />
+          <circle cx="190" cy="140" r="6" fill={accent} />
+          <circle cx="190" cy="140" r="14" fill={accent} opacity="0.2" />
+          <rect x="24" y="175" width="85" height="26" rx="6" fill="#1E293B" />
+          <rect x="120" y="175" width="95" height="26" rx="6" fill="#1E293B" />
+          <rect x="225" y="175" width="85" height="26" rx="6" fill="#1E293B" />
+        </g>
+      </svg>
+    );
+  }
   const accent = fresh ? ['#3FA34D', '#E76F51', '#F4A93B'][index % 3] : ['#C6FF3D', '#7C5CFF', '#40D9E8'][index % 3];
   return <svg viewBox="0 0 480 320" aria-hidden="true" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
     <defs><linearGradient id={`preview-art-${fresh ? 'fresh' : 'volt'}-${index}`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={fresh ? '#FFF8EC' : '#252C3B'}/><stop offset="1" stopColor={fresh ? '#DCEBD4' : '#11141C'}/></linearGradient></defs>
@@ -352,19 +381,19 @@ export default function TemplatePreviewPage({
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border-2 border-black font-mono text-[11px] sm:text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000] mb-5"
                     style={{ backgroundColor: currentAccent }}
                   >
-                    <span>{template.id === 'fresh-crate' ? 'FRESH CRATE / LOCAL MARKET' : template.id === 'volt-gear' ? 'VOLT GEAR / FIELD TESTED' : `${template.category.toUpperCase()} / ${template.badge?.toUpperCase() || 'POPULAR'}`}</span>
+                    <span>{template.id === 'fresh-crate' ? 'FRESH CRATE / LOCAL MARKET' : template.id === 'volt-gear' ? 'VOLT GEAR / FIELD TESTED' : template.id === 'kuro-craft' ? 'KURO STUDIO / CREATIVE ARCHIVE' : `${template.category.toUpperCase()} / ${template.badge?.toUpperCase() || 'POPULAR'}`}</span>
                   </div>
 
                   <h1 className={`font-display text-4xl sm:text-6xl font-black tracking-tight mb-4 leading-[1.08] ${
                     isDarkTemplate ? 'text-white' : 'text-[#171717]'
                   }`}>
-                    {template.id === 'fresh-crate' ? 'Good food starts close to home.' : template.id === 'volt-gear' ? 'Gear for your next big idea.' : template.name}
+                    {template.id === 'fresh-crate' ? 'Good food starts close to home.' : template.id === 'volt-gear' ? 'Gear for your next big idea.' : template.id === 'kuro-craft' ? 'Designing interfaces that redefine utility.' : template.name}
                   </h1>
 
                   <p className={`font-mono text-xs sm:text-base opacity-80 max-w-xl mx-auto mb-8 leading-relaxed ${
                     isDarkTemplate ? 'text-neutral-300' : 'text-[#525252]'
                   }`}>
-                    {template.id === 'fresh-crate' ? 'Seasonal produce from nearby farms, thoughtful pantry staples, and a fresh delivery at your door.' : template.id === 'volt-gear' ? 'Thoughtful technology for work, play, and everything you want to build next.' : template.description}
+                    {template.id === 'fresh-crate' ? 'Seasonal produce from nearby farms, thoughtful pantry staples, and a fresh delivery at your door.' : template.id === 'volt-gear' ? 'Thoughtful technology for work, play, and everything you want to build next.' : template.id === 'kuro-craft' ? 'Multi-disciplinary design director partnering with high-velocity venture teams to ship category-defining software.' : template.description}
                   </p>
 
                   <div className="flex flex-wrap items-center justify-center gap-3">
@@ -385,7 +414,7 @@ export default function TemplatePreviewPage({
                           : 'border-black/30 text-black hover:border-black bg-black/5'
                       }`}
                     >
-                      Browse the store
+                      {template.id === 'kuro-craft' ? 'Explore Works' : 'Browse the store'}
                     </button>
                   </div>
                 </section>
@@ -393,14 +422,14 @@ export default function TemplatePreviewPage({
                 <section className={`px-6 sm:px-12 pb-14 pt-4 ${isDarkTemplate ? 'text-white' : 'text-[#171717]'}`}>
                   <div className="max-w-5xl mx-auto">
                     <div className="flex items-end justify-between mb-5">
-                      <div><span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: currentAccent }}>Curated for you</span><h2 className="text-2xl font-black mt-1">Featured pieces</h2></div>
-                      <button type="button" onClick={() => document.getElementById('template-featured-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="text-xs font-bold underline underline-offset-4">Shop all</button>
+                      <div><span className="font-mono text-[10px] uppercase tracking-widest" style={{ color: currentAccent }}>{template.id === 'kuro-craft' ? 'Recent Production Work' : 'Curated for you'}</span><h2 className="text-2xl font-black mt-1">{template.id === 'kuro-craft' ? 'Selected Case Studies' : 'Featured pieces'}</h2></div>
+                      <button type="button" onClick={() => document.getElementById('template-featured-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="text-xs font-bold underline underline-offset-4">{template.id === 'kuro-craft' ? 'View all' : 'Shop all'}</button>
                     </div>
                     <div id="template-featured-products" className="grid grid-cols-1 scroll-mt-24 sm:grid-cols-3 gap-4">
                       {products.slice(0, 3).map((product, index) => (
                         <article key={product.name} className={`overflow-hidden rounded-2xl border ${isDarkTemplate ? 'bg-white/5 border-white/10' : 'bg-white border-black/10'}`}>
-                          <div className="h-40 overflow-hidden"><PreviewProductArt fresh={template.id === 'fresh-crate'} index={index}/></div>
-                          <div className="p-4"><span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{product.category}</span><h3 className="font-bold mt-1">{product.name}</h3><p className="text-xs opacity-65 mt-1">{product.detail}</p><div className="flex items-center justify-between mt-4"><span className="font-black">₹{product.price.toLocaleString('en-IN')}</span><button type="button" onClick={() => setCartCount((count) => count + 1)} className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ backgroundColor: currentAccent, color: isDarkTemplate ? '#111' : '#171717' }}>Add to {template.id === 'fresh-crate' ? 'crate' : 'bag'}</button></div></div>
+                          <div className="h-40 overflow-hidden"><PreviewProductArt templateId={template.id} fresh={template.id === 'fresh-crate'} index={index}/></div>
+                          <div className="p-4"><span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{product.category}</span><h3 className="font-bold mt-1">{product.name}</h3><p className="text-xs opacity-65 mt-1">{product.detail}</p><div className="flex items-center justify-between mt-4">{template.id === 'kuro-craft' ? <span className="font-mono text-xs font-bold text-[#00F0FF]">{['99.4% Adoption', 'Webby Nominee', 'FWA SOTD', '2.4M ARR', 'Red Dot 2026', 'App Store 4.9'][index % 6]}</span> : <span className="font-black">₹{product.price.toLocaleString('en-IN')}</span>}<button type="button" onClick={() => setCartCount((count) => count + 1)} className="px-3 py-1.5 rounded-lg text-xs font-bold" style={{ backgroundColor: currentAccent, color: isDarkTemplate ? '#111' : '#171717' }}>{template.id === 'kuro-craft' ? 'Explore Spec ↗' : `Add to ${template.id === 'fresh-crate' ? 'crate' : 'bag'}`}</button></div></div>
                         </article>
                       ))}
                     </div>
@@ -476,8 +505,8 @@ export default function TemplatePreviewPage({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     {visibleProducts.length ? visibleProducts.map((product, index) => (
                       <article key={product.name} className={`overflow-hidden rounded-2xl border ${isDarkTemplate ? 'bg-white/5 border-white/10 text-white' : 'bg-white border-black/10 text-black'}`}>
-                        <div className="h-48 overflow-hidden"><PreviewProductArt fresh={template.id === 'fresh-crate'} index={index}/></div>
-                        <div className="p-4"><span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{product.category}</span><h3 className="font-bold mt-1">{product.name}</h3><p className="text-xs opacity-65 mt-1">{product.detail}</p><div className="flex items-center justify-between mt-4"><span className="font-black">₹{product.price.toLocaleString('en-IN')}</span><div className="flex gap-2"><button type="button" aria-label={`Save ${product.name}`} onClick={() => setWishlist((items) => items.includes(product.name) ? items.filter((item) => item !== product.name) : [...items, product.name])} className="rounded-lg border px-2 py-1 text-xs">{wishlist.includes(product.name) ? '♥' : '♡'}</button><button type="button" onClick={() => setCartCount((count) => count + 1)} className="rounded-lg px-3 py-1.5 text-xs font-bold text-black" style={{ backgroundColor: currentAccent }}>Add to {template.id === 'fresh-crate' ? 'crate' : 'bag'}</button></div></div></div>
+                        <div className="h-48 overflow-hidden"><PreviewProductArt templateId={template.id} fresh={template.id === 'fresh-crate'} index={index}/></div>
+                        <div className="p-4"><span className="font-mono text-[9px] uppercase tracking-wider opacity-60">{product.category}</span><h3 className="font-bold mt-1">{product.name}</h3><p className="text-xs opacity-65 mt-1">{product.detail}</p><div className="flex items-center justify-between mt-4">{template.id === 'kuro-craft' ? <span className="font-mono text-xs font-bold text-[#00F0FF]">{['99.4% Adoption', 'Webby Nominee', 'FWA SOTD', '2.4M ARR', 'Red Dot 2026', 'App Store 4.9'][index % 6]}</span> : <span className="font-black">₹{product.price.toLocaleString('en-IN')}</span>}<div className="flex gap-2"><button type="button" aria-label={`Save ${product.name}`} onClick={() => setWishlist((items) => items.includes(product.name) ? items.filter((item) => item !== product.name) : [...items, product.name])} className="rounded-lg border px-2 py-1 text-xs">{wishlist.includes(product.name) ? '♥' : '♡'}</button><button type="button" onClick={() => setCartCount((count) => count + 1)} className="rounded-lg px-3 py-1.5 text-xs font-bold text-black" style={{ backgroundColor: currentAccent }}>{template.id === 'kuro-craft' ? 'Explore Spec ↗' : `Add to ${template.id === 'fresh-crate' ? 'crate' : 'bag'}`}</button></div></div></div>
                       </article>
                   )) : <p className="col-span-full py-12 text-center text-sm opacity-60">No saved items yet. Tap the heart on a piece to add it to your wishlist.</p>}
                   </div>

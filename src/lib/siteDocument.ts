@@ -521,6 +521,13 @@ export function createSiteDocument(input: {
           { id: 'menu-how-it-works', label: 'How it works', target: { type: 'anchor', value: 'home-how-it-works' }, newTab: false },
           { id: 'menu-our-story', label: 'Our story', target: { type: 'anchor', value: 'home-story' }, newTab: false },
         ]
+      : input.templateId === 'kuro-craft'
+        ? [
+            { id: 'menu-work', label: 'Selected Work', target: { type: 'anchor', value: 'home-best-sellers' }, newTab: false },
+            { id: 'menu-disciplines', label: 'Disciplines', target: { type: 'anchor', value: 'home-categories' }, newTab: false },
+            { id: 'menu-philosophy', label: 'Philosophy', target: { type: 'anchor', value: 'home-how-it-works' }, newTab: false },
+            { id: 'menu-contact', label: 'Contact', target: { type: 'anchor', value: 'home-cta' }, newTab: false },
+          ]
       : [];
   const assets: SiteAsset[] = (input.assets || []).filter((asset) => asset.role === 'image' || asset.role === 'icon');
   for (const [role, src] of [['product', input.assetUrl], ['logo', input.logoUrl], ['favicon', input.faviconUrl]] as const) if (src) assets.push({ id: `${role}-asset`, name: role, role, src, alt: role === 'logo' ? `${input.name} logo` : '' });

@@ -21,6 +21,64 @@ function TemplatePreviewCanvas({ template }: { template: Template }) {
         <div className="mt-3 grid grid-cols-3 gap-2">{[['01','PULSE ANC','#4B5570'],['02','VOLT KEYS','#626B32'],['03','NOVA QHD','#382A69']].map(([n,label,color]) => <div key={label} className="rounded-lg border border-white/10 bg-[#151923] p-2"><div className="flex h-12 items-center justify-center rounded-md" style={{ background: `linear-gradient(145deg, ${color}, #0B0D12)` }}><svg viewBox="0 0 48 38" aria-hidden="true" className="h-8 w-10"><path d="M12 24v-8C12 7 17 3 24 3s12 4 12 13v8" fill="none" stroke="#C6FF3D" strokeWidth="4" strokeLinecap="round"/><rect x="7" y="17" width="9" height="15" rx="3" fill="#30384A" stroke="#C6FF3D" strokeWidth="2"/><rect x="32" y="17" width="9" height="15" rx="3" fill="#30384A" stroke="#C6FF3D" strokeWidth="2"/></svg></div><p className="mt-1 font-mono text-[6px] text-[#C6FF3D]">{n}</p><p className="text-[7px] font-bold">{label}</p></div>)}</div>
       </div>
     ),
+    'kuro-craft': (
+      <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[#090A0F] p-4 text-[#F4F6FB] select-none">
+        {/* Glow backdrop */}
+        <div className="absolute top-0 right-0 w-36 h-36 bg-[#00F0FF]/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#7000FF]/15 rounded-full blur-2xl pointer-events-none" />
+
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-white/10 pb-2 relative z-10">
+          <div className="flex items-center gap-1.5 font-mono text-[8px] font-bold tracking-[.18em] text-[#00F0FF]">
+            <span>KURO STUDIO</span>
+          </div>
+          <div className="flex items-center gap-1 font-mono text-[7px] text-[#A0AEC0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00FF66] animate-pulse" />
+            <span>AVAILABLE Q1/Q2</span>
+          </div>
+        </div>
+
+        {/* Hero Preview */}
+        <div className="my-auto py-2 relative z-10">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="font-mono text-[7px] uppercase tracking-[.2em] text-[#00F0FF] bg-[#00F0FF]/10 px-2 py-0.5 rounded border border-[#00F0FF]/20">
+              Product &amp; Systems
+            </span>
+            <span className="font-mono text-[7px] text-white/50">3× FWA</span>
+          </div>
+          <h3 className="font-display text-xl font-black leading-tight text-white tracking-tight">
+            Designing interfaces that redefine utility.
+          </h3>
+          <p className="mt-1.5 text-[8px] font-mono leading-relaxed text-[#94A3B8] line-clamp-1">
+            Partnering with venture-backed engineering teams to ship iconic software.
+          </p>
+
+          {/* Featured Case Study Card */}
+          <div className="mt-2.5 rounded-xl border border-[#00F0FF]/30 bg-gradient-to-br from-[#121826] to-[#0A0D14] p-2.5 shadow-sm">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="font-mono text-[6px] uppercase tracking-wider text-[#00F0FF]">CASE STUDY 01</span>
+                <p className="text-[9px] font-bold text-white mt-0.5">Vortex Design System</p>
+              </div>
+              <span className="font-mono text-[7px] font-bold text-[#00FF66] bg-[#00FF66]/10 px-1.5 py-0.5 rounded border border-[#00FF66]/20">
+                +99.4% ADOPTION
+              </span>
+            </div>
+            <div className="mt-2 flex items-center gap-1.5">
+              <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[6px] text-white/70">UI/UX</span>
+              <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[6px] text-white/70">Design Tokens</span>
+              <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[6px] text-white/70">Next.js 16</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer info bar */}
+        <div className="border-t border-white/10 pt-2 flex items-center justify-between font-mono text-[7px] text-[#64748B] relative z-10">
+          <span>TRUSTED BY VERCEL &amp; LINEAR</span>
+          <span className="text-[#00F0FF] font-bold">VIEW WORK ↗</span>
+        </div>
+      </div>
+    ),
     'agenn-ai': (
       <div className="h-full relative overflow-hidden bg-[#F8FAFC] text-[#0F172A] p-4 flex flex-col justify-between select-none">
         {/* Blue tech glow */}

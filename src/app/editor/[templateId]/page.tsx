@@ -149,7 +149,8 @@ export default function EditorPage({ params }: { params: Promise<{ templateId: s
   const template = getTemplateById(templateId) || TEMPLATES[0];
   const isFreshCrate = template.id === 'fresh-crate';
   const isVoltGear = template.id === 'volt-gear';
-  const storefrontPages = useMemo(() => isFreshCrate || isVoltGear ? createStorefrontPages(template.id, template.pages, template.products || []) : null, [isFreshCrate, isVoltGear, template.id, template.pages, template.products]);
+  const isKuroCraft = template.id === 'kuro-craft';
+  const storefrontPages = useMemo(() => isFreshCrate || isVoltGear || isKuroCraft ? createStorefrontPages(template.id, template.pages, template.products || []) : null, [isFreshCrate, isVoltGear, isKuroCraft, template.id, template.pages, template.products]);
 
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('desktop');
   const [leftPanel, setLeftPanel] = useState<LeftPanel>('sections');
@@ -210,8 +211,8 @@ export default function EditorPage({ params }: { params: Promise<{ templateId: s
     surfaceColor: '#FFFFFF',
     textColor: template.textColor || '#FFFFFF',
     mutedColor: '#737373',
-    fontFamily: isFreshCrate ? 'DM Sans, sans-serif' : 'Inter, sans-serif',
-    headingFont: isFreshCrate ? 'Fraunces, Georgia, serif' : isVoltGear ? 'Space Grotesk, Inter, sans-serif' : 'Inter, sans-serif',
+    fontFamily: isFreshCrate ? 'DM Sans, sans-serif' : isKuroCraft ? 'Space Grotesk, sans-serif' : 'Inter, sans-serif',
+    headingFont: isFreshCrate ? 'Fraunces, Georgia, serif' : isVoltGear || isKuroCraft ? 'Space Grotesk, Inter, sans-serif' : 'Inter, sans-serif',
     radius: '16px',
     borderRadius: '16px',
     buttonStyle: 'solid',
@@ -262,34 +263,41 @@ export default function EditorPage({ params }: { params: Promise<{ templateId: s
 
   // Bespoke content state (can be updated via AI)
   const [heroContent, setHeroContent] = useState({
-    badge: isFreshCrate ? 'PICKED FRESH // DELIVERED NEARBY' : isVoltGear ? 'LIMITED DROP // BUILT TO PERFORM' : `${template.category} // ${template.badge || 'FEATURED'}`,
-    title: isFreshCrate ? 'Good food starts close to home.' : isVoltGear ? 'Gear up for what is next.' : template.name,
-    description: isFreshCrate ? 'Seasonal produce and pantry favorites, sourced from nearby farms and delivered on your schedule.' : isVoltGear ? 'Thoughtful technology, tested specs, and limited releases for work, play, and everything between.' : template.description,
-    ctaPrimary: isFreshCrate ? 'Build your crate' : isVoltGear ? 'Explore the latest drop' : 'Launch Experience',
-    ctaSecondary: isFreshCrate ? 'How delivery works' : isVoltGear ? 'Compare products' : 'Documentation',
-    stat1Label: isFreshCrate ? 'LOCAL FARM PARTNERS' : isVoltGear ? 'DROP READY' : 'RUNTIME VELOCITY',
-    stat1Value: isFreshCrate ? '24 nearby farms' : isVoltGear ? '12 tested picks' : '4.2M Tokens/s',
-    stat2Label: isFreshCrate ? 'FROM HARVEST TO DOOR' : isVoltGear ? 'EASY RETURNS' : 'ZERO-SHOT BENCHMARK',
-    stat2Value: isFreshCrate ? 'Same-day slots' : isVoltGear ? '30-day window' : '99.98% SLA',
+    badge: isFreshCrate ? 'PICKED FRESH // DELIVERED NEARBY' : isVoltGear ? 'LIMITED DROP // BUILT TO PERFORM' : isKuroCraft ? 'KURO STUDIO // ARCHIVE 2026' : `${template.category} // ${template.badge || 'FEATURED'}`,
+    title: isFreshCrate ? 'Good food starts close to home.' : isVoltGear ? 'Gear up for what is next.' : isKuroCraft ? 'Designing interfaces that redefine utility.' : template.name,
+    description: isFreshCrate ? 'Seasonal produce and pantry favorites, sourced from nearby farms and delivered on your schedule.' : isVoltGear ? 'Thoughtful technology, tested specs, and limited releases for work, play, and everything between.' : isKuroCraft ? 'Multi-disciplinary design director partnering with high-velocity venture teams to ship category-defining software.' : template.description,
+    ctaPrimary: isFreshCrate ? 'Build your crate' : isVoltGear ? 'Explore the latest drop' : isKuroCraft ? 'Explore Selected Works' : 'Launch Experience',
+    ctaSecondary: isFreshCrate ? 'How delivery works' : isVoltGear ? 'Compare products' : isKuroCraft ? 'Initiate Inquiry' : 'Documentation',
+    stat1Label: isFreshCrate ? 'LOCAL FARM PARTNERS' : isVoltGear ? 'DROP READY' : isKuroCraft ? 'RECOGNITION' : 'RUNTIME VELOCITY',
+    stat1Value: isFreshCrate ? '24 nearby farms' : isVoltGear ? '12 tested picks' : isKuroCraft ? '3× FWA · 2× SOTD' : '4.2M Tokens/s',
+    stat2Label: isFreshCrate ? 'FROM HARVEST TO DOOR' : isVoltGear ? 'EASY RETURNS' : isKuroCraft ? 'AVAILABILITY' : 'ZERO-SHOT BENCHMARK',
+    stat2Value: isFreshCrate ? 'Same-day slots' : isVoltGear ? '30-day window' : isKuroCraft ? 'Q1/Q2 2026' : '99.98% SLA',
   });
 
   const initialFeatures = template.features.map((title) => ({
     title,
-    desc: `${title} is thoughtfully integrated into the ${template.name} shopping experience.`,
+    desc: `${title} is thoughtfully integrated into the ${template.name} experience.`,
   }));
   const [featuresContent, setFeaturesContent] = useState(initialFeatures);
 
-  const [testimonialsContent, setTestimonialsContent] = useState([
-    template.topReview
-      ? { quote: template.topReview.comment, name: template.topReview.author, role: template.topReview.role }
-      : { quote: `${template.name} gave our store the premium experience we wanted.`, name: 'Alex Morgan', role: 'Store owner' },
-    { quote: `${template.name} made it easy to present our products beautifully and serve customers on every screen.`, name: 'Jamie Lee', role: 'Brand director' },
-  ]);
+  const [testimonialsContent, setTestimonialsContent] = useState(
+    isKuroCraft
+      ? [
+          { quote: 'One of the sharpest interface designers in the entire ecosystem. The design system paid for itself in month one.', name: 'Guillermo R.', role: 'CEO at Vercel alumni' },
+          { quote: 'Turned our fragmented UI into a unified, award-winning application in under six weeks.', name: 'Elena V.', role: 'VP of Product at Linear partner' },
+        ]
+      : [
+          template.topReview
+            ? { quote: template.topReview.comment, name: template.topReview.author, role: template.topReview.role }
+            : { quote: `${template.name} gave our store the premium experience we wanted.`, name: 'Alex Morgan', role: 'Store owner' },
+          { quote: `${template.name} made it easy to present our products beautifully and serve customers on every screen.`, name: 'Jamie Lee', role: 'Brand director' },
+        ]
+  );
 
   const [ctaContent, setCtaContent] = useState({
-    title: isFreshCrate ? 'Make this week a little fresher.' : isVoltGear ? 'Find the setup that fits you.' : `Discover ${template.name}.`,
-    desc: isFreshCrate ? 'Choose your favorites, pick a delivery window, and we will bring your crate to the door.' : isVoltGear ? 'Compare the details, build a bundle, and get your next essential ready for the drop.' : `Explore the ${template.name} collection and find your next favorite.`,
-    buttonText: isFreshCrate ? 'Shop this week’s harvest →' : isVoltGear ? 'Build your setup →' : 'Shop the collection →',
+    title: isFreshCrate ? 'Make this week a little fresher.' : isVoltGear ? 'Find the setup that fits you.' : isKuroCraft ? 'Have an ambitious project in mind?' : `Discover ${template.name}.`,
+    desc: isFreshCrate ? 'Choose your favorites, pick a delivery window, and we will bring your crate to the door.' : isVoltGear ? 'Compare the details, build a bundle, and get your next essential ready for the drop.' : isKuroCraft ? 'Let’s discuss your vision, system architecture, and launch timeline.' : `Explore the ${template.name} collection and find your next favorite.`,
+    buttonText: isFreshCrate ? 'Shop this week’s harvest →' : isVoltGear ? 'Build your setup →' : isKuroCraft ? 'Initiate Project Conversation →' : 'Shop the collection →',
   });
 
   const [editorStore] = useState(() => createEditorStore(createSiteDocument({
