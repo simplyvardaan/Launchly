@@ -46,4 +46,6 @@ test('wishlist, comparison, recent items, and currency formatting work determini
   assert.deepEqual(addRecentlyViewed(['a', 'b'], 'c', 2), ['c', 'a']);
   assert.equal(formatStoreCurrency(100, 'INR'), '₹100');
   assert.match(formatStoreCurrency(8400, 'USD'), /^\$100\.00$/);
+  assert.equal(formatStoreCurrency(NaN, 'INR'), '₹0');
+  assert.equal(formatStoreCurrency(-100, 'INR'), '₹0');
 });

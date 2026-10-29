@@ -67,11 +67,13 @@ export function getCartTotals(items: StoreCartItem[], templateId: string, coupon
 }
 
 export function formatStoreCurrency(amountInRupees: number, currency: StoreCurrency = 'INR'): string {
-  const value = amountInRupees * currencyRates[currency];
+  const safeAmount = Number.isFinite(amountInRupees) && amountInRupees >= 0 ? amountInRupees : 0;
+  const rate = currencyRates[currency] ?? 1;
+  const value = safeAmount * rate;
   const locale = currency === 'INR' ? 'en-IN' : 'en-US';
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency,
+    currency: currencyRates[currency] ? currency : 'INR',
     maximumFractionDigits: currency === 'INR' ? 0 : 2,
   }).format(value);
 }
