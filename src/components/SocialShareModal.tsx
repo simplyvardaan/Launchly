@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   X,
   Share2,
@@ -66,6 +66,15 @@ export default function SocialShareModal({
   const [activePlatform, setActivePlatform] = useState<'twitter' | 'linkedin' | 'whatsapp' | 'raw'>('twitter');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedMeta, setCopiedMeta] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(initialTitle);
+      setDesc(initialDesc);
+      setBadge(initialBadge);
+      setAccent(initialAccent);
+    }
+  }, [isOpen, initialTitle, initialDesc, initialBadge, initialAccent]);
 
   // Construct dynamic OG Image URL
   const ogImageUrl = useMemo(() => {
