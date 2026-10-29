@@ -8,16 +8,20 @@ interface RateLimitRecord {
 }
 
 const rateLimitMap = new Map<string, RateLimitRecord>();
+const MAX_RATE_LIMIT_ENTRIES = 10000;
+
+function pruneStaleEntries(now: number) {
+  for (const [key, record] of rateLimitMap.entries()) {
+    if (record.resetAt <= now) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
 
 // Clean up stale entries every 5 minutes
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
-    const now = Date.now();
-    for (const [key, record] of rateLimitMap.entries()) {
-      if (record.resetAt <= now) {
-        rateLimitMap.delete(key);
-      }
-    }
+    pruneStaleEntries(Date.now());
   }, 5 * 60 * 1000);
 }
 
@@ -30,6 +34,14 @@ export function rateLimit(
   const existing = rateLimitMap.get(identifier);
 
   if (!existing || existing.resetAt <= now) {
+    if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
+      pruneStaleEntries(now);
+      if (rateLimitMap.size >= MAX_RATE_LIMIT_ENTRIES) {
+        const oldestKey = rateLimitMap.keys().next().value;
+        if (oldestKey) rateLimitMap.delete(oldestKey);
+      }
+    }
+
     rateLimitMap.set(identifier, {
       count: 1,
       resetAt: now + windowMs,
