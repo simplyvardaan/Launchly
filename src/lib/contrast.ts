@@ -2,12 +2,19 @@
 
 function hexToRgb(hex: string): [number, number, number] {
   const cleanHex = hex.replace('#', '').trim();
-  const fullHex = cleanHex.length === 3 
-    ? cleanHex.split('').map(c => c + c).join('') 
-    : cleanHex.padEnd(6, '0');
-  
-  const num = parseInt(fullHex, 16);
-  return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+  let r = 0, g = 0, b = 0;
+  if (cleanHex.length === 3 || cleanHex.length === 4) {
+    r = parseInt(cleanHex[0] + cleanHex[0], 16) || 0;
+    g = parseInt(cleanHex[1] + cleanHex[1], 16) || 0;
+    b = parseInt(cleanHex[2] + cleanHex[2], 16) || 0;
+  } else {
+    const fullHex = cleanHex.padEnd(6, '0').slice(0, 6);
+    const num = parseInt(fullHex, 16) || 0;
+    r = (num >> 16) & 255;
+    g = (num >> 8) & 255;
+    b = num & 255;
+  }
+  return [r, g, b];
 }
 
 function getLuminance(r: number, g: number, b: number): number {
@@ -51,7 +58,6 @@ export function getWcagLevel(ratio: number): {
 
 export function suggestAccessibleColor(fgHex: string, bgHex: string): string {
   try {
-    const [, , ] = hexToRgb(bgHex);
     const [r, g, b] = hexToRgb(bgHex);
     const bgL = getLuminance(r, g, b);
     // If background is dark, return bright accessible text (#F4F4F6 or #FFFFFF)
