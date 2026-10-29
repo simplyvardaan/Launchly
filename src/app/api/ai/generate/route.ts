@@ -49,8 +49,25 @@ export async function POST(req: Request) {
       );
     }
 
-    const { prompt = '' } = await req.json();
-    const cleanPrompt = typeof prompt === 'string' ? prompt.slice(0, 500) : '';
+    let body: { prompt?: unknown };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid or malformed JSON payload.' },
+        { status: 400 }
+      );
+    }
+
+    const prompt = body?.prompt;
+    if (typeof prompt !== 'string' || !prompt.trim()) {
+      return NextResponse.json(
+        { success: false, error: 'A text prompt is required to generate design tokens.' },
+        { status: 400 }
+      );
+    }
+
+    const cleanPrompt = prompt.trim().slice(0, 500);
     const p = cleanPrompt.toLowerCase();
 
     // Determine aesthetic archetype from user prompt
