@@ -54,7 +54,7 @@ export function generateProjectFiles({
       lint: 'next lint',
     },
     dependencies: {
-      next: '^15.2.0',
+      next: '^16.4.0',
       react: '^19.0.0',
       'react-dom': '^19.0.0',
       'lucide-react': '^1.54.0',
@@ -71,7 +71,7 @@ export function generateProjectFiles({
 
   const tsConfig = {
     compilerOptions: {
-      target: 'es5',
+      target: 'ES2022',
       lib: ['dom', 'dom.iterable', 'esnext'],
       allowJs: true,
       skipLibCheck: true,
