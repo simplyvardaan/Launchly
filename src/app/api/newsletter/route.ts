@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { addSubscriber, getSubscribersCount } from '@/lib/db';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
+import { parseNewsletterTopics } from '@/lib/newsletterTopics';
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ success: false, message: 'A subscription object is required.' }, { status: 400 });
+    }
     if (typeof body?.website === 'string' && body.website.trim()) {
       return NextResponse.json({ success: true, message: 'Subscription received.' });
     }
@@ -28,8 +32,12 @@ export async function POST(request: Request) {
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanSource = typeof source === 'string' ? source.slice(0, 50) : 'frontpage';
+    const parsedTopics = parseNewsletterTopics(body.topics);
+    if (parsedTopics.error) {
+      return NextResponse.json({ success: false, message: parsedTopics.error }, { status: 400 });
+    }
 
-    const result = await addSubscriber(cleanEmail, cleanSource);
+    const result = await addSubscriber(cleanEmail, cleanSource, parsedTopics.topics);
     if (!result.success) {
       return NextResponse.json(result, { status: 400 });
     }
@@ -38,6 +46,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ...result,
       totalSubscribers: total,
+      subscribedAt: result.subscriber?.createdAt,
+      topics: result.subscriber?.topics ?? [],
     });
   } catch {
     return NextResponse.json(

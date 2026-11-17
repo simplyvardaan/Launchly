@@ -16,6 +16,7 @@ export interface Subscriber {
   email: string;
   createdAt: string;
   source?: string;
+  topics: string[];
 }
 
 export interface ContactMessage {
@@ -225,7 +226,8 @@ export async function verifyUser(
 // ==========================================
 export async function addSubscriber(
   email: string, 
-  source = 'frontpage'
+  source = 'frontpage',
+  topics?: string[]
 ): Promise<{ success: boolean; message: string; subscriber?: Subscriber }> {
   const cleanEmail = normalizeEmail(email);
   if (!isValidEmail(cleanEmail)) {
@@ -240,6 +242,7 @@ export async function addSubscriber(
     email: cleanEmail,
     createdAt: now,
     source,
+    topics: topics ?? [],
   };
 
   try {
@@ -250,10 +253,16 @@ export async function addSubscriber(
       .maybeSingle();
 
     if (existing) {
+      let savedTopics = Array.isArray(existing.topics) ? existing.topics as string[] : [];
+      if (topics !== undefined) {
+        const { error } = await supabaseAdmin.from('subscribers').update({ topics }).eq('email', cleanEmail);
+        if (error) return { success: false, message: 'Subscription preferences could not be saved.' };
+        savedTopics = topics;
+      }
       return { 
         success: true, 
         message: "You're already subscribed! Check your inbox for updates.", 
-        subscriber: { id: existing.id, email: existing.email, createdAt: existing.created_at, source: existing.source } 
+        subscriber: { id: existing.id, email: existing.email, createdAt: existing.created_at, source: existing.source, topics: savedTopics }
       };
     }
 
@@ -261,12 +270,18 @@ export async function addSubscriber(
       id,
       email: cleanEmail,
       source,
+      topics: newSub.topics,
       created_at: now
     });
   } catch (err) {
     console.warn('[Supabase] Subscribers table error, fallback to cache:', err);
   }
 
+  const cached = subscribersCache.find((subscriber) => subscriber.email === cleanEmail);
+  if (cached) {
+    if (topics !== undefined) cached.topics = topics;
+    return { success: true, message: "You're already subscribed! Check your inbox for updates.", subscriber: cached };
+  }
   subscribersCache.push(newSub);
   return {
     success: true,
