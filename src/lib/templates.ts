@@ -1,5 +1,18 @@
 import type { Template, TemplateCategory } from '@/types';
 
+export function calculateTemplateMetrics(template: Pick<Template, 'description' | 'pages' | 'features'>) {
+  const content = [template.description, ...template.pages, ...template.features].join(' ').trim();
+  const contentWords = content ? content.split(/\s+/).length : 0;
+  const sectionCount = template.pages.length;
+
+  return {
+    contentWords,
+    readingMinutes: Math.max(1, Math.ceil(contentWords / 200)),
+    sectionCount,
+    featuresPerSection: sectionCount ? Math.round((template.features.length / sectionCount) * 10) / 10 : 0,
+  };
+}
+
 export const CATEGORIES: TemplateCategory[] = [
   'All',
   'SaaS',

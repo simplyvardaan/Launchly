@@ -1,7 +1,20 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { CATEGORIES, DEFAULT_TEMPLATE, getTemplateById, getTemplatesByCategory, searchTemplates, TEMPLATES } from '../src/lib/templates.ts';
+import { CATEGORIES, DEFAULT_TEMPLATE, calculateTemplateMetrics, getTemplateById, getTemplatesByCategory, searchTemplates, TEMPLATES } from '../src/lib/templates.ts';
+
+test('template metrics reflect authored metadata and handle empty sections', () => {
+  assert.deepEqual(calculateTemplateMetrics({ description: 'Short overview', pages: ['Home', 'About'], features: ['Fast setup'] }), {
+    contentWords: 6,
+    readingMinutes: 1,
+    sectionCount: 2,
+    featuresPerSection: 0.5,
+  });
+  const longDescription = Array(401).fill('word').join(' ');
+  assert.equal(calculateTemplateMetrics({ description: longDescription, pages: [], features: [] }).readingMinutes, 3);
+  assert.equal(calculateTemplateMetrics({ description: '', pages: [], features: [] }).featuresPerSection, 0);
+  assert.ok(TEMPLATES.every((template) => calculateTemplateMetrics(template).sectionCount === template.pages.length));
+});
 import { createStorefrontPages, getTemplateFeatureDescriptions } from '../src/lib/templateContent.ts';
 
 test('catalog contains the two ecommerce starters', () => {

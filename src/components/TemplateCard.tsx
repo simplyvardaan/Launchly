@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Eye, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Template } from '@/types';
+import { calculateTemplateMetrics } from '@/lib/templates';
 
 // High-fidelity, award-winning visual previews for each template
 function TemplatePreviewCanvas({ template }: { template: Template }) {
@@ -163,6 +164,7 @@ interface TemplateCardProps {
 }
 
 export default function TemplateCard({ template, onCustomize }: TemplateCardProps) {
+  const metrics = calculateTemplateMetrics(template);
   return (
     <div className="group rounded-2xl overflow-hidden border-[3px] border-ink bg-card shadow-brutal hover:shadow-brutal-lg hover:-translate-y-1 transition-all flex flex-col justify-between">
       {/* Visual preview canvas */}
@@ -223,8 +225,13 @@ export default function TemplateCard({ template, onCustomize }: TemplateCardProp
           </div>
 
           {/* Description */}
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-4 font-mono">
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2 font-mono">
             {template.description}
+          </p>
+          <p className="mb-4 inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-ink/20 bg-card px-2 py-1 font-mono text-[10px] font-semibold text-muted-foreground" aria-label={`About ${metrics.readingMinutes} minute read; ${metrics.sectionCount} template pages`}>
+            <span>{metrics.readingMinutes} min read</span>
+            <span aria-hidden="true">·</span>
+            <span>{metrics.sectionCount} {metrics.sectionCount === 1 ? 'page' : 'pages'}</span>
           </p>
         </div>
 
