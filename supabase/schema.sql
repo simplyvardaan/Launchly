@@ -62,8 +62,11 @@ CREATE TABLE IF NOT EXISTS public.subscribers (
   id TEXT PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   source TEXT DEFAULT 'frontpage',
+  topics TEXT[] NOT NULL DEFAULT '{}',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE public.subscribers ADD COLUMN IF NOT EXISTS topics TEXT[] NOT NULL DEFAULT '{}';
 
 CREATE INDEX IF NOT EXISTS idx_subscribers_email ON public.subscribers (email);
 
